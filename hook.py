@@ -61,6 +61,7 @@ def main(*,
 
     DEBUG = debug
 
+    '''
     print("Lets see if we got everything:")
     print(f"{transitions=}")
     print(f"{latch_train=}")
@@ -75,8 +76,7 @@ def main(*,
     print(f"{overread=}")
     print(f"{blank=}")
     print(f"{nobulk=}")
-
-    return
+    '''
 
     players = list(map(int, controllers.split(",")))
 
