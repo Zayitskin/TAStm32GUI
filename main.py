@@ -215,15 +215,23 @@ class App(tk.Tk):
         #When packing to the bottom, it needs to be done in reverse order
 
         #Buttons
-        self.buttonFrame = makeDuoFrame(self.tastm32Frame)
+        self.buttonFrame = tk.Frame(self.tastm32Frame)
+        self.buttonFrame.grid_rowconfigure(0, weight = 1)
+        self.buttonFrame.grid_columnconfigure(0, weight = 1)
+        self.buttonFrame.grid_columnconfigure(1, weight = 1)
+        self.buttonFrame.grid_columnconfigure(2, weight = 1)
         self.saveButton = tk.Button(self.buttonFrame,
                                     state = tk.DISABLED,
                                     text = "Save")
         self.saveButton.grid(row = 0, column = 0, sticky = tk.E + tk.W)
+        self.stopButton = tk.Button(self.buttonFrame,
+                                    text = "Stop",
+                                    command = self.stopRun)
+        self.stopButton.grid(row = 0, column = 1, sticky = tk.E + tk.W)
         self.runButton = tk.Button(self.buttonFrame,
                                    text = "Run",
                                    command = self.doRun)
-        self.runButton.grid(row = 0, column = 1, sticky = tk.E + tk.W)
+        self.runButton.grid(row = 0, column = 2, sticky = tk.E + tk.W)
         self.buttonFrame.pack(fill = "x", side = tk.BOTTOM)
 
         #TODO: Add stop button (subprocess join)
@@ -388,13 +396,12 @@ class App(tk.Tk):
 
         self.child = Process(target = main, kwargs = kwargs)
         self.child.start()
-        #self.child.join()
-        #print("DONE!")
-                                     
-                                 
 
-        
+    def stopRun(self):
 
+        if self.child != None:
+            if self.child.is_alive():
+                self.child.terminate()
         
 if __name__ == "__main__":
     app = App()
