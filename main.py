@@ -233,8 +233,6 @@ class App(tk.Tk):
                                    command = self.doRun)
         self.runButton.grid(row = 0, column = 2, sticky = tk.E + tk.W)
         self.buttonFrame.pack(fill = "x", side = tk.BOTTOM)
-
-        #TODO: Add stop button (subprocess join)
         
         #Debug Selector
         self.debug_frame = makeDuoFrame(self.tastm32Frame)
@@ -255,6 +253,7 @@ class App(tk.Tk):
         self.serial_entry.pack(fill = "x", side = tk.BOTTOM)
         label = tk.Label(self.tastm32Frame, text = "Serial Port")
         label.pack(fill = "x", side = tk.BOTTOM)
+        #TODO: Change this to a better system of serial port selection, maybe automatic?
 
         #Call callback to get intial text for readout
         self.commandReadoutCallback()
