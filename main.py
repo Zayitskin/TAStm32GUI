@@ -10,11 +10,14 @@ from widgets import ControllerSelector, TransitionsTable
 from hook import main
 
 #Run Unpacker
-def readRun(run: tk.StringVar) -> dict:
+def readRun(run: tk.StringVar) -> [dict, bytes]:
 
     with zipfile.ZipFile(run.get()) as z:
         with z.open("run.json") as j:
-            return json.load(j)
+            data: dict = json.load(j)
+            with z.open(data["movie"]) as m:
+                movie: bytes = m.read()
+                return data, movie
 
 def makeDuoFrame(parent):
 
@@ -55,7 +58,7 @@ class App(tk.Tk):
         self.run = tk.StringVar(self, self.runs[0]) #TODO: Makes this not crash with no runs
         self.runSelector = tk.OptionMenu(self.controlFrame, self.run, *self.runs)
         self.runSelector.pack(fill = "x")
-        info = readRun(self.run) #Get the info for the run to populate other widgets
+        info, self.movie = readRun(self.run) #Get the info for the run to populate other widgets
         cso = info["console specific options"]
         #Dynamic Information
 
@@ -222,6 +225,8 @@ class App(tk.Tk):
                                    command = self.doRun)
         self.runButton.grid(row = 0, column = 1, sticky = tk.E + tk.W)
         self.buttonFrame.pack(fill = "x", side = tk.BOTTOM)
+
+        #TODO: Add stop button (subprocess join)
         
         #Debug Selector
         self.debug_frame = makeDuoFrame(self.tastm32Frame)
@@ -263,7 +268,7 @@ class App(tk.Tk):
         
     #runSelector Callback
     def runSelectorCallback(self, *args):
-        info = readRun(self.run) #Get the info for the run to populate other widgets
+        info, self.movie = readRun(self.run) #Get the info for the run to populate other widgets
         cso = info["console specific options"]
         #Dynamic Info
         self.controllerSelector.setStates(info["controllers"])
@@ -373,8 +378,8 @@ class App(tk.Tk):
             "serial": self.serial.get(),
             "reset": None if self.initial_power.get() == "none" else self.initial_power.get(),
             "clock": None if self.clock_filter.get() == 0 else self.clock_filter.get(),
-            "movie": None, #TODO: FIXME
-            "console": self.console.get(),
+            "movie": self.movie,
+            "console": self.console.get().lower(),
             "dpcm": self.latch_filter.get(),
             "overread": self.overread.get(),
             "blank": self.blank_frames.get(),
