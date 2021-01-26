@@ -6,6 +6,7 @@ import time
 import sys
 
 from tastm32 import TAStm32, RunObject
+import r08, r16m, m64, dtm, rgen
 
 from typing import Optional
 
