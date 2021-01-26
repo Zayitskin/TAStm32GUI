@@ -1,4 +1,6 @@
 import glob, zipfile, json
+from pathlib import Path
+
 from tkinter import font as tkFont
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -49,8 +51,9 @@ class App(tk.Tk):
         
         #Control Frame
         #Run Selector
-        self.runs = glob.glob("runs\\**\\*.tas", recursive = True)
-        self.run = tk.StringVar(self, self.runs[0])
+        self.runs = sorted(Path(".").glob("runs/**/*.tas"))
+        print(self.runs)
+        self.run = tk.StringVar(self, self.runs[0]) #TODO: Makes this not crash with no runs
         self.runSelector = tk.OptionMenu(self.controlFrame, self.run, *self.runs)
         self.runSelector.pack(fill = "x")
         info = readRun(self.run) #Get the info for the run to populate other widgets
