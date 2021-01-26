@@ -1,4 +1,4 @@
-import glob, zipfile, json
+import zipfile, json
 from pathlib import Path
 
 from tkinter import font as tkFont
@@ -52,7 +52,6 @@ class App(tk.Tk):
         #Control Frame
         #Run Selector
         self.runs = sorted(Path(".").glob("runs/**/*.tas"))
-        print(self.runs)
         self.run = tk.StringVar(self, self.runs[0]) #TODO: Makes this not crash with no runs
         self.runSelector = tk.OptionMenu(self.controlFrame, self.run, *self.runs)
         self.runSelector.pack(fill = "x")
@@ -331,7 +330,7 @@ class App(tk.Tk):
         if self.blank_frames.get() > 0:
             cmd += f"--blank {self.blank_frames.get()} "
         if self.latch_filter.get() == True:
-            cmd += "--dcpm "
+            cmd += "--dpcm "
         if self.initial_power.get() == "hard reset":
             cmd += "--hardreset "
         elif self.initial_power.get() == "soft reset":
@@ -376,7 +375,7 @@ class App(tk.Tk):
             "clock": None if self.clock_filter.get() == 0 else self.clock_filter.get(),
             "movie": None, #TODO: FIXME
             "console": self.console.get(),
-            "dcpm": self.latch_filter.get(),
+            "dpcm": self.latch_filter.get(),
             "overread": self.overread.get(),
             "blank": self.blank_frames.get(),
             "nobulk": not self.bulk_data.get()

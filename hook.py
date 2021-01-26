@@ -20,7 +20,7 @@ def main(*,
          clock: Optional[int] = None,
          movie: bytes,
          console: str,
-         dcpm: bool,
+         dpcm: bool,
          overread: bool,
          blank: int = 0,
          nobulk: bool) -> None:
@@ -72,7 +72,7 @@ def main(*,
     print(f"{clock=}")
     print(f"{movie=}")
     print(f"{console=}")
-    print(f"{dcpm=}")
+    print(f"{dpcm=}")
     print(f"{overread=}")
     print(f"{blank=}")
     print(f"{nobulk=}")
