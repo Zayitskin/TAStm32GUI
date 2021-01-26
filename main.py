@@ -1,4 +1,7 @@
-import zipfile, json
+import zipfile
+import json
+import serial
+import serial.tools.list_ports
 from pathlib import Path
 
 from tkinter import font as tkFont
@@ -18,6 +21,25 @@ def readRun(run: tk.StringVar) -> [dict, bytes]:
             with z.open(data["movie"]) as m:
                 movie: bytes = m.read()
                 return data, movie
+
+def getSerialPorts() -> list:
+
+    vid: bytes = 0x0B07
+    pid: bytes = 0x07A5
+    all_ports = serial.tools.list_ports.comports()
+    if len(all_ports) == 0:
+        return ["No serial ports available"]
+
+    devs: list = []
+    for dev in all_ports:
+        if dev.vid == vid and dev.pid == pid:
+            devs.append(dev)
+
+    if len(devs) == 0:
+        return ["No device located"]
+
+    return [devs[i].device for i in range(len(devs))]
+        
 
 def makeDuoFrame(parent):
 
@@ -43,6 +65,9 @@ class App(tk.Tk):
         #Changing default font size
         default_font = tkFont.nametofont("TkDefaultFont")
         default_font.configure(size = 12)
+
+        #Load valid serial devices
+        self.devices = getSerialPorts()
         
         #Frames
         self.controlFrame = tk.Frame(self, bg = "red")
@@ -247,10 +272,11 @@ class App(tk.Tk):
         self.debug_frame.pack(fill = "x", side = tk.BOTTOM)
 
         #Serial Port Selector
-        self.serial = tk.StringVar(self, "")
-        self.serial_entry = tk.Entry(self.tastm32Frame,
-                                     textvariable = self.serial)
-        self.serial_entry.pack(fill = "x", side = tk.BOTTOM)
+        self.serial = tk.StringVar(self, self.devices[0])
+        self.serial_optionmenu = tk.OptionMenu(self.tastm32Frame,
+                                               self.serial,
+                                               *self.devices)
+        self.serial_optionmenu.pack(fill = "x", side = tk.BOTTOM)
         label = tk.Label(self.tastm32Frame, text = "Serial Port")
         label.pack(fill = "x", side = tk.BOTTOM)
         #TODO: Change this to a better system of serial port selection, maybe automatic?
