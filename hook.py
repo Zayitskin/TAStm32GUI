@@ -136,6 +136,7 @@ def main(*,
             dev.write(data)
             if fn % 100 == 0:
                 print(f"Sending Latch: {fn}.") #TODO: Pipe?
+            fn += 1
         except IndexError:
             pass
 
