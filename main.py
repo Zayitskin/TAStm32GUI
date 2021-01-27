@@ -81,7 +81,9 @@ class App(tk.Tk):
         #Control Frame
         #Run Selector
         self.runs = sorted(Path(".").glob("runs/**/*.tas"))
-        self.run = tk.StringVar(self, self.runs[0]) #TODO: Makes this not crash with no runs
+        if len(self.runs) == 0:
+            self.runs.append("No runs found")
+        self.run = tk.StringVar(self, self.runs[0])
         self.runSelector = tk.OptionMenu(self.controlFrame, self.run, *self.runs)
         self.runSelector.pack(fill = "x")
         info, self.movie = readRun(self.run) #Get the info for the run to populate other widgets
@@ -388,6 +390,7 @@ class App(tk.Tk):
             cmd += f"--nobulk "
         cmd += self.run.get().split("\\")[-1]
         self.readout.set(cmd)
+        #TODO: Add run validation so invalid runs cannot be sent to the TAStm32
 
     def doRun(self):
 
