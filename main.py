@@ -19,6 +19,8 @@ def readRun(run: tk.StringVar) -> [dict, bytes]:
     with zipfile.ZipFile(run.get()) as z:
         with z.open("run.json") as j:
             data: dict = json.load(j)
+            if data["movie"] == "":
+                return data, b""
             with z.open(data["movie"]) as m:
                 movie: bytes = m.read()
                 return data, movie

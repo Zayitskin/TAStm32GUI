@@ -232,7 +232,7 @@ class App(tk.Tk):
             "name": self.name.get(),
             "console": self.console.get(),
             "authors": self.authors.get(),
-            "description": self.description.get("1.0"),
+            "description": self.description.get("1.0", "end").strip(),
             "console specific options": {
                 "latch filter": self.latch.get(),
                 "clock filter": self.clock.get(),
@@ -243,12 +243,14 @@ class App(tk.Tk):
             "bulk data mode": self.bulk.get(),
             "transitions": self.transitionsTable.get(),
             "latch train": self.train.get(),
-            "movie": self.movie.get()}
+            "movie": self.movie.get(),
+            "version": "1.0"}
         with zipfile.ZipFile(file, "w") as z:
             z.writestr("run.json", json.dumps(data))
-            if pathlib.Path(data["movie"]).exists():
-                name = pathlib.Path(data["movie"]).parts[-1]
-                z.write(data["movie"], arcname = name)
+            if data["movie"] != "":
+                if pathlib.Path(data["movie"]).exists():
+                    name = pathlib.Path(data["movie"]).parts[-1]
+                    z.write(data["movie"], arcname = name)
             
             
 
@@ -258,6 +260,9 @@ class App(tk.Tk):
                                           filetypes = (("TAS files", "*.tas"),
                                                        ("Zip archives", "*.zip"))
                                           )
+        if file == "":
+            return
+        
         with zipfile.ZipFile(file, "r") as z:
             with z.open("run.json") as j:
                 data = json.load(j)
