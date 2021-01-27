@@ -228,6 +228,15 @@ class App(tk.Tk):
                                             defaultextension = ".tas")
         if file == "":
             return
+        abspath = self.movie.get()
+        relpath = ""
+        if abspath != "":
+                if pathlib.Path(abspath).exists():
+                    relpath = pathlib.Path(abspath).parts[-1]
+                else:
+                    print("Error: movie not found.")
+                    return
+                
         data = {
             "name": self.name.get(),
             "console": self.console.get(),
@@ -243,14 +252,12 @@ class App(tk.Tk):
             "bulk data mode": self.bulk.get(),
             "transitions": self.transitionsTable.get(),
             "latch train": self.train.get(),
-            "movie": self.movie.get(),
-            "version": "1.0"}
+            "movie": relpath,
+            "version": "1.1"}
         with zipfile.ZipFile(file, "w") as z:
             z.writestr("run.json", json.dumps(data))
-            if data["movie"] != "":
-                if pathlib.Path(data["movie"]).exists():
-                    name = pathlib.Path(data["movie"]).parts[-1]
-                    z.write(data["movie"], arcname = name)
+            if abspath != "":
+                z.write(abspath, arcname = relpath)
             
             
 
