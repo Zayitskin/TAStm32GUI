@@ -88,8 +88,28 @@ class App(tk.Tk):
         self.run = tk.StringVar(self, self.runs[0])
         self.runSelector = tk.OptionMenu(self.controlFrame, self.run, *self.runs)
         self.runSelector.pack(fill = "x")
-        info, self.movie = readRun(self.run) #Get the info for the run to populate other widgets
+        if self.run.get() != "No runs found":
+            info, self.movie = readRun(self.run) #Get the info for the run to populate other widgets
+        else:
+            info = {
+                "name": "",
+                "authors": "",
+                "description": "",
+                "console": "",
+                "console specific options": {
+                    "latch filter": False,
+                    "clock filter": 0,
+                    "overread": False},
+                "controllers": "",
+                "blank frames": 0,
+                "initial power setting": "none",
+                "bulk data mode": False,
+                "transitions": "",
+                "latch train": "",
+                "movie": ""}
+            self.movie = None
         cso = info["console specific options"]
+        
         #Dynamic Information
 
         #Console Specifics

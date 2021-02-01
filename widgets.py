@@ -95,7 +95,7 @@ class TransitionsTable(tk.Frame):
         label: tk.Label = tk.Label(self, text = "Transitions")
         label.grid(row = 0, column = 0, columnspan = 2)
 
-        if transitions != None:
+        if transitions != "" and transitions != None:
             split = transitions.split(" ")
             for i in range(0, len(split), 2):
                 self.addRow(split[i:i + 2])
@@ -154,10 +154,11 @@ class TransitionsTable(tk.Frame):
         self.running = False
         while self.count > 0:
             self.removeRow()
-        for transition in transitions.split(" "):
-            self.addRow()
-            self.rows[-1]["entryVar"].set(transition[0])
-            self.rows[-1]["optionsVar"].set(transition[1])
+        if transitions != "":
+            for transition in transitions.split(" "):
+                self.addRow()
+                self.rows[-1]["entryVar"].set(transition[0])
+                self.rows[-1]["optionsVar"].set(transition[1])
         self.addRow()
         self.running = True
 
