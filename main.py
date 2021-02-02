@@ -401,7 +401,8 @@ class App(tk.Tk):
         #TODO: Fix _tkinter.TclError: expected floating-point number but got ""
         if self.clock_filter.get() > 0:
             cmd += f"--clock {int(self.clock_filter.get() * 4)} "
-        if (transitions := self.transitionsTable.get().split(" ")) != [""]:
+        transitions = self.transitionsTable.get().split(" ")
+        if transitions != [""]:
             for i in range(len(transitions) // 2):
                 cmd += f"--transition {transitions[2 * i]} {transitions[2 * i + 1]} "
         if self.overread.get() == True:
