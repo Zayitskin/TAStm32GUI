@@ -66,10 +66,15 @@ class App(tk.Tk):
         label = tk.Label(self.console_frame,
                          text = "Console")
         label.grid(row = 0, column = 0, sticky = tk.E + tk.W)
-        self.console = tk.StringVar(self, "")
-        self.console_entry = tk.Entry(self.console_frame,
-                                      textvariable = self.console)
-        self.console_entry.grid(row = 1, column = 0, sticky = tk.E + tk.W)
+        self.console = tk.StringVar(self, "Choose a console")
+        self.console_optionmenu = tk.OptionMenu(self.console_frame,
+                                                self.console,
+                                                *["NES",
+                                                  "SNES",
+                                                  "N64",
+                                                  "Gamecube",
+                                                  "Genesis"])
+        self.console_optionmenu.grid(row = 1, column = 0, sticky = tk.E + tk.W)
         self.console_frame.pack(fill = "x")
         
         #Author(s)
