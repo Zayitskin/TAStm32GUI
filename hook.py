@@ -127,7 +127,7 @@ def main(*,
     for blank in range(blank):
         data = run_id + blankframe
         dev.write(data)
-    print(f"Sending Blank Latches: {blank}.") #TODO: Pipe?
+    print(f"Sending Blank Latches: {blankframe}.") #TODO: Pipe?
 
     fn = 0
     for latch in range(int_buffer - blank):
