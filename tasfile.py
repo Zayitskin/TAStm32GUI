@@ -2,12 +2,14 @@
 import zipfile
 import os
 import json
+import time
 import pathlib
 
 import tkinter as tk
 from tkinter import font as tkFont
 from tkinter import filedialog
 from tkinter.scrolledtext import ScrolledText
+from multiprocessing import Process
 
 from widgets import ControllerSelector, TransitionsTable
 
@@ -320,11 +322,22 @@ class App(tk.Tk):
         else:
             with open(self.movie_name.get(), "rb") as m:
                 self.movie = m.read()
-                         
 
-if __name__ == "__main__":
+def runGUI():
 
     app = App()
     app.title("TAS Format Constructor")
     app.geometry("900x800")
     app.mainloop()
+
+if __name__ == "__main__":
+
+    gui = Process(target = runGUI)
+    gui.start()
+    try:
+        while True:
+            time.sleep(0.5)
+            if gui.is_alive() == False:
+                break
+    except KeyboardInterrupt:
+        gui.terminate()
