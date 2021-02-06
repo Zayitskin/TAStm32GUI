@@ -124,10 +124,10 @@ def main(*,
             dev.send_transition(run_id, *transition)
 
     #Send Blank Frames
-    for blank in range(blank):
+    for _ in range(blank):
         data = run_id + blankframe
         dev.write(data)
-    print(f"Sending Blank Latches: {blankframe}.") #TODO: Pipe?
+    print(f"Sending Blank Latches: {blank}.") #TODO: Pipe?
 
     fn = 0
     for latch in range(int_buffer - blank):
