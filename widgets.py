@@ -80,7 +80,7 @@ class ControllerSelector(tk.Frame):
 
 class TransitionsTable(tk.Frame):
 
-    def __init__(self, parent: tk.Frame, transitions: list = [], trace: Optional[Callable] = None, **kwargs) -> None:
+    def __init__(self, parent: tk.Frame, transitions: Optional[str] = None, trace: Optional[Callable] = None, **kwargs) -> None:
 
         super().__init__(parent, kwargs)
         self.grid_columnconfigure(0, weight = 3)
@@ -95,11 +95,12 @@ class TransitionsTable(tk.Frame):
         label: tk.Label = tk.Label(self, text = "Transitions")
         label.grid(row = 0, column = 0, columnspan = 2)
 
-        for transition in transitions:
-            self.addRow(transition)
-            #self.rows[-1]["entryVar"].set(transition[0])
-            #self.rows[-1]["optionsVar"].set(transition[1])
-        self.addRow()
+        if transitions != "" and transitions != None:
+            split = transitions.split(" ")
+            for i in range(0, len(split), 2):
+                self.addRow(split[i:i + 2])
+                
+        self.addRow()   
         self.running = True
 
     def addRow(self, transition: Optional[list] = None) -> None:
@@ -146,17 +147,18 @@ class TransitionsTable(tk.Frame):
             if frame.isnumeric():
                 output += f"{frame} {'X' if transition not in ['A', 'N', 'S', 'H'] else transition}"
 
-        return output
+        return output.strip()
 
-    def set(self, transitions: list) -> None:
+    def set(self, transitions: str) -> None:
 
         self.running = False
         while self.count > 0:
             self.removeRow()
-        for transition in transitions:
-            self.addRow()
-            self.rows[-1]["entryVar"].set(transition[0])
-            self.rows[-1]["optionsVar"].set(transition[1])
+        if transitions != "":
+            for transition in transitions.split(" "):
+                self.addRow()
+                self.rows[-1]["entryVar"].set(transition[0])
+                self.rows[-1]["optionsVar"].set(transition[1])
         self.addRow()
         self.running = True
 

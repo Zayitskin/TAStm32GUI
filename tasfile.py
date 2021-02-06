@@ -66,10 +66,15 @@ class App(tk.Tk):
         label = tk.Label(self.console_frame,
                          text = "Console")
         label.grid(row = 0, column = 0, sticky = tk.E + tk.W)
-        self.console = tk.StringVar(self, "")
-        self.console_entry = tk.Entry(self.console_frame,
-                                      textvariable = self.console)
-        self.console_entry.grid(row = 1, column = 0, sticky = tk.E + tk.W)
+        self.console = tk.StringVar(self, "Choose a console")
+        self.console_optionmenu = tk.OptionMenu(self.console_frame,
+                                                self.console,
+                                                *["NES",
+                                                  "SNES",
+                                                  "N64",
+                                                  "Gamecube",
+                                                  "Genesis"])
+        self.console_optionmenu.grid(row = 1, column = 0, sticky = tk.E + tk.W)
         self.console_frame.pack(fill = "x")
         
         #Author(s)
@@ -191,20 +196,26 @@ class App(tk.Tk):
         self.train_frame.pack(fill = "x")
 
         #Movie Filename
-        self.movie_frame = makeStackedFrame(self.right)
-        label = tk.Label(self.movie_frame,
-                         text = "Movie Filename")
-        label.grid(row = 0, column = 0, sticky = tk.E + tk.W)
-        buffer = makeDuoFrame(self.movie_frame)
-        buffer.grid(row = 1, column = 0, sticky = tk.E + tk.W)
-        self.movie = tk.StringVar(self, "")
-        self.movie_entry = tk.Entry(buffer,
-                                    textvariable = self.movie)
-        self.movie_entry.grid(row = 0, column = 0, sticky = tk.E + tk.W)
-        self.movie_button = tk.Button(buffer,
-                                      text = "Open",
+        self.movie_frame = tk.Frame(self.right)
+        self.movie_frame.grid_rowconfigure(0, weight = 1)
+        self.movie_frame.grid_rowconfigure(1, weight = 1)
+        self.movie_frame.grid_rowconfigure(2, weight = 1)
+        self.movie_frame.grid_columnconfigure(0, weight = 1)
+        self.movie_button = tk.Button(self.movie_frame,
+                                      text = "Select Movie",
                                       command = self.openMovie)
-        self.movie_button.grid(row = 0, column = 1, sticky = tk.E + tk.W)
+        self.movie_button.grid(row = 0, column = 0, sticky = tk.E + tk.W)
+        self.movie = None
+        self.movie_name = tk.StringVar(self, "No movie selected")
+        self.movie_label = tk.Entry(self.movie_frame,
+                                    textvariable = self.movie_name,
+                                    state = "readonly")
+        self.movie_label.grid(row = 1, column = 0, sticky = tk.E + tk.W)
+        self.movie_scrollbar = tk.Scrollbar(self.movie_frame,
+                                            command = self.movie_label.xview,
+                                            orient = tk.HORIZONTAL)
+        self.movie_label.config(xscrollcommand = self.movie_scrollbar.set)
+        self.movie_scrollbar.grid(row = 2, column = 0, sticky = tk.E + tk.W)
         self.movie_frame.pack(fill = "x")
 
         #Write Button
@@ -228,11 +239,17 @@ class App(tk.Tk):
                                             defaultextension = ".tas")
         if file == "":
             return
+        
+        if self.movie_name.get() != "No movie selected":
+            path = pathlib.Path(self.movie_name.get()).parts[-1]
+        else:
+            path = None
+                
         data = {
             "name": self.name.get(),
             "console": self.console.get(),
             "authors": self.authors.get(),
-            "description": self.description.get("1.0"),
+            "description": self.description.get("1.0", "end").strip(),
             "console specific options": {
                 "latch filter": self.latch.get(),
                 "clock filter": self.clock.get(),
@@ -243,12 +260,12 @@ class App(tk.Tk):
             "bulk data mode": self.bulk.get(),
             "transitions": self.transitionsTable.get(),
             "latch train": self.train.get(),
-            "movie": self.movie.get()}
+            "movie": path,
+            "version": "1.1"}
         with zipfile.ZipFile(file, "w") as z:
             z.writestr("run.json", json.dumps(data))
-            if pathlib.Path(data["movie"]).exists():
-                name = pathlib.Path(data["movie"]).parts[-1]
-                z.write(data["movie"], arcname = name)
+            if path != None:
+                z.writestr(path, self.movie)
             
             
 
@@ -258,6 +275,9 @@ class App(tk.Tk):
                                           filetypes = (("TAS files", "*.tas"),
                                                        ("Zip archives", "*.zip"))
                                           )
+        if file == "":
+            return
+        
         with zipfile.ZipFile(file, "r") as z:
             with z.open("run.json") as j:
                 data = json.load(j)
@@ -278,10 +298,12 @@ class App(tk.Tk):
                 self.bulk.set(data["bulk data mode"])
                 self.transitionsTable.set(data["transitions"])
                 self.train.set(data["latch train"])
-                self.movie.set(data["movie"])
+                self.movie_name.set(data["movie"])
+            with z.open(self.movie_name.get(), "r") as m:
+                self.movie = m.read()
 
     def openMovie(self):
-        self.movie.set(
+        self.movie_name.set(
             filedialog.askopenfilename(initialdir = os.getcwd(),
                                        title = "Select Movie File",
                                        filetypes = (("Common movie formats",
@@ -292,6 +314,12 @@ class App(tk.Tk):
                                                     ("dtm files", "*.dtm"),
                                                     ("rgen files", "*.rgen"))
                                        ))
+        if self.movie_name.get() == "":
+            self.movie_name.set("No movie selected")
+            self.movie = None
+        else:
+            with open(self.movie_name.get(), "rb") as m:
+                self.movie = m.read()
                          
 
 if __name__ == "__main__":

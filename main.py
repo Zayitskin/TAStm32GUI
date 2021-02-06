@@ -19,6 +19,8 @@ def readRun(run: tk.StringVar) -> [dict, bytes]:
     with zipfile.ZipFile(run.get()) as z:
         with z.open("run.json") as j:
             data: dict = json.load(j)
+            if data["movie"] == "":
+                return data, b""
             with z.open(data["movie"]) as m:
                 movie: bytes = m.read()
                 return data, movie
@@ -86,8 +88,28 @@ class App(tk.Tk):
         self.run = tk.StringVar(self, self.runs[0])
         self.runSelector = tk.OptionMenu(self.controlFrame, self.run, *self.runs)
         self.runSelector.pack(fill = "x")
-        info, self.movie = readRun(self.run) #Get the info for the run to populate other widgets
+        if self.run.get() != "No runs found":
+            info, self.movie = readRun(self.run) #Get the info for the run to populate other widgets
+        else:
+            info = {
+                "name": "",
+                "authors": "",
+                "description": "",
+                "console": "",
+                "console specific options": {
+                    "latch filter": False,
+                    "clock filter": 0,
+                    "overread": False},
+                "controllers": "",
+                "blank frames": 0,
+                "initial power setting": "none",
+                "bulk data mode": False,
+                "transitions": "",
+                "latch train": "",
+                "movie": ""}
+            self.movie = None
         cso = info["console specific options"]
+        
         #Dynamic Information
 
         #Console Specifics
@@ -379,7 +401,8 @@ class App(tk.Tk):
         #TODO: Fix _tkinter.TclError: expected floating-point number but got ""
         if self.clock_filter.get() > 0:
             cmd += f"--clock {int(self.clock_filter.get() * 4)} "
-        if (transitions := self.transitionsTable.get().split(" ")) != [""]:
+        transitions = self.transitionsTable.get().split(" ")
+        if transitions != [""]:
             for i in range(len(transitions) // 2):
                 cmd += f"--transition {transitions[2 * i]} {transitions[2 * i + 1]} "
         if self.overread.get() == True:
