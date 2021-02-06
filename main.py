@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import zipfile
 import json
+import time
 import serial
 import serial.tools.list_ports
 from pathlib import Path
@@ -454,10 +455,23 @@ class App(tk.Tk):
         if self.child != None:
             if self.child.is_alive():
                 self.child.terminate()
-        
-if __name__ == "__main__":
+
+def runGUI():
+
     app = App()
     app.title("TAStm32 Controller")
     #TODO: Configurable default window size
     app.geometry("1000x800")
     app.mainloop()
+        
+if __name__ == "__main__":
+
+    gui = Process(target = runGUI)
+    gui.start()
+    try:
+        while True:
+            time.sleep(0.5)
+            if gui.is_alive() == False:
+                break
+    except KeyboardInterrupt:
+        gui.terminate()
