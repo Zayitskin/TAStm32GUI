@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 import zipfile
 import os
 import json
@@ -299,4 +300,14 @@ if __name__ == "__main__":
     app = App()
     app.title("TAS Format Constructor")
     app.geometry("900x800")
-    app.mainloop()
+    while True:
+        try:
+            app.update_idletasks()
+            app.update()
+            time.sleep(0.01)
+        except KeyboardInterrupt:
+            app.destroy()
+            break
+        except:
+            break
+

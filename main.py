@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import time
 import zipfile
 import json
 import serial
@@ -437,4 +438,13 @@ if __name__ == "__main__":
     app.title("TAStm32 Controller")
     #TODO: Configurable default window size
     app.geometry("1000x800")
-    app.mainloop()
+    while True: 
+        try:
+            app.update_idletasks()
+            app.update()
+            time.sleep(0.01)
+        except KeyboardInterrupt:
+            app.destroy()
+            break
+        except:
+            break
