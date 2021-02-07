@@ -85,7 +85,7 @@ def main(*,
 
     if reset == "hard reset" or reset == "soft reset":
         dev.power_off()
-        if reser == "hard reset":
+        if reset == "hard reset":
             time.sleep(2.0) #TODO: FIXME?
 
     #No need for clock check cause the GUI did that already
