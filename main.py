@@ -272,8 +272,8 @@ class App(tk.Tk):
         self.buttonFrame.grid_columnconfigure(1, weight = 1)
         self.buttonFrame.grid_columnconfigure(2, weight = 1)
         self.saveButton = tk.Button(self.buttonFrame,
-                                    state = tk.DISABLED,
-                                    text = "Save")
+                                    text = "Save",
+                                    command = self.saveRun)
         self.saveButton.grid(row = 0, column = 0, sticky = tk.E + tk.W)
         self.stopButton = tk.Button(self.buttonFrame,
                                     text = "Stop",
@@ -305,7 +305,6 @@ class App(tk.Tk):
         self.serial_optionmenu.pack(fill = "x", side = tk.BOTTOM)
         label = tk.Label(self.tastm32Frame, text = "Serial Port")
         label.pack(fill = "x", side = tk.BOTTOM)
-        #TODO: Change this to a better system of serial port selection, maybe automatic?
 
         #Call callback to get intial text for readout
         self.commandReadoutCallback()
@@ -418,8 +417,6 @@ class App(tk.Tk):
 
     def doRun(self):
 
-        print("Running!")
-
         if self.child != None:
             if self.child.is_alive():
                 return
@@ -455,6 +452,25 @@ class App(tk.Tk):
         if self.child != None:
             if self.child.is_alive():
                 self.child.terminate()
+
+    def saveRun(self):
+
+        info, movie = readRun(self.run)
+        cso = "console specific options"
+        info[cso]["latch filter"] = self.latch_filter.get()
+        info[cso]["clock filter"] = self.clock_filter.get()
+        info[cso]["overread"] = self.overread.get()
+        info["controllers"] = self.controllerSelector.getStates()
+        info["blank frames"] = self.blank_frames.get()
+        info["initial power setting"] = self.initial_power.get()
+        info["bulk data mode"] = self.bulk_data.get()
+        info["transitions"] = self.transitionsTable.get()
+        info["latch train"] = self.latch_train.get()
+        
+        with zipfile.ZipFile(self.run.get(), "w") as z:
+            z.writestr("run.json", json.dumps(info))
+            if info["movie"] != None:
+                z.writestr(info["movie"], movie)
 
 def runGUI():
 
