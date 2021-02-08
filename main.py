@@ -283,6 +283,7 @@ class App(tk.Tk):
         self.stopButton.grid(row = 0, column = 1, sticky = tk.E + tk.W)
         self.runButton = tk.Button(self.buttonFrame,
                                    text = "Run",
+                                   state = tk.DISABLED,
                                    command = self.doRun)
         self.runButton.grid(row = 0, column = 2, sticky = tk.E + tk.W)
         self.buttonFrame.pack(fill = "x", side = tk.BOTTOM)
@@ -389,7 +390,7 @@ class App(tk.Tk):
         cmd = "python3 tastm32.py "
         if self.debug.get() == True:
             cmd += "--debug "
-        if self.serial.get() != "":
+        if self.serial.get() != "No device located":
             cmd += f"--serial {self.serial.get()} "
         cmd += f"--console {self.console.get().lower()} "
         if self.controllerSelector.getStates() != "1":
@@ -417,7 +418,21 @@ class App(tk.Tk):
             cmd += f"--nobulk "
         cmd += self.movie_name
         self.readout.set(cmd)
-        #TODO: Add run validation so invalid runs cannot be sent to the TAStm32
+
+        valid = True
+
+        if self.serial.get() == "No device located":
+            valid = False
+        for i in range(len(transitions) // 2):
+            if transitions[2 * i + 1] == "X":
+                valid = False
+        if self.movie_name == "":
+            valid = False
+
+        if valid == True:
+            self.runButton.configure(state = tk.ACTIVE)
+        else:
+            self.runButton.configure(state = tk.DISABLED)
 
     def doRun(self):
 
