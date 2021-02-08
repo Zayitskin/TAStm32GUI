@@ -10,16 +10,24 @@ class ControllerSelector(tk.Frame):
         super().__init__(parent, kwargs)
         self.grid_rowconfigure(0, weight = 1)
         self.grid_rowconfigure(1, weight = 1)
-        for i in range(16):
+        for i in range(8):
             self.grid_columnconfigure(i, weight = 1)
         
-        tk.Label(self, text = "Controllers").grid(row = 0, column = 0, columnspan = 16, sticky = tk.E + tk.W)
+        tk.Label(self, text = "Controllers").grid(row = 0, column = 0, columnspan = 8, sticky = tk.E + tk.W)
         
         self.states: list = [tk.BooleanVar(self, False) for i in range(8)]
+
+        boxes: list = [tk.Frame(self) for i in range(8)]
+
+        labels: list = [tk.Label(boxes[i - 1], text = str(i)) for i in range(1, 9)]
+
+        for index, box in enumerate(boxes):
+            box.grid(row = 1, column = index, sticky = tk.E + tk.W)
+            box.grid_rowconfigure(0, weight = 1)
+            box.grid_columnconfigure(0, weight = 1)
+            box.grid_columnconfigure(1, weight = 1)
         
-        labels: list = [tk.Label(self, text = str(i)) for i in range(1, 9)]
-        
-        self.checkbuttons: list = [tk.Checkbutton(self,
+        self.checkbuttons: list = [tk.Checkbutton(boxes[i],
                                                   onvalue = True,
                                                   offvalue = False,
                                                   variable = self.states[i]) for i in range(8)]
@@ -29,8 +37,12 @@ class ControllerSelector(tk.Frame):
         self.lockBoxes(console)
         
         for i in range(8):
-            labels[i].grid(row = 1, column = 2 * i, sticky = tk.E + tk.W)
-            self.checkbuttons[i].grid(row = 1, column = 2 * i + 1, sticky = tk.E + tk.W)
+            labels[i].grid(row = 0, column = 0, sticky = tk.E)
+            self.checkbuttons[i].grid(row = 0, column = 1, sticky = tk.W)
+            if i % 2 == 0:
+                boxes[i].configure(bg = "lightgrey")
+                labels[i].configure(bg = "lightgrey")
+                self.checkbuttons[i].configure(bg = "lightgrey")
 
     def setStates(self, controllers: str) -> None:
 
@@ -191,10 +203,6 @@ class TransitionsTable(tk.Frame):
 
 if __name__ == "__main__":
     
-    #cs = ControllerSelector(None, controllers = "124578", console = "snes")
-    #cs.pack()
-    #print(cs.getStates())
-    tt: TransitionsTable = TransitionsTable(None, [("12345", "A"), ("24680", "B")])
-    tt.pack(fill = "both")
-    tt.set([("55555", "A"), ("56565", "C"), ("99999", "D")])
-    print(tt.get())
+    cs = ControllerSelector(None, controllers = "124578", console = "snes")
+    cs.pack()
+    print(cs.getStates())
