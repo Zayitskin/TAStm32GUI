@@ -110,6 +110,8 @@ class App(tk.Tk):
                 "movie": ""}
             self.movie = None
         cso = info["console specific options"]
+
+        self.movie_name = info["movie"]
         
         #Dynamic Information
 
@@ -377,6 +379,8 @@ class App(tk.Tk):
         self.console.set(info["console"])
         self.authors.set(info["authors"])
         self.description.set(info["description"])
+
+        self.movie_name = info["movie"]
             
         
 
@@ -411,7 +415,7 @@ class App(tk.Tk):
             cmd += f"--latchtrain {self.latch_train.get()} "
         if self.bulk_data.get() == False:
             cmd += f"--nobulk "
-        cmd += self.run.get().split("\\")[-1]
+        cmd += self.movie_name
         self.readout.set(cmd)
         #TODO: Add run validation so invalid runs cannot be sent to the TAStm32
 
