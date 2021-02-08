@@ -223,7 +223,8 @@ class App(tk.Tk):
         #Write Button
         self.write_button = tk.Button(self,
                                       text = "Write TAS file",
-                                      command = self.saveRun)
+                                      command = self.saveRun,
+                                      state = tk.DISABLED)
         self.write_button.pack(fill = "x", side = tk.BOTTOM)
 
         #Open Button
@@ -232,6 +233,33 @@ class App(tk.Tk):
                                      command = self.openRun)
         self.open_button.pack(fill = "x", side = tk.BOTTOM)
 
+        self.console.trace_add("write", self.lockBoxes)
+        
+        self.console.trace_add("write", self.validateRun)
+        self.movie_name.trace_add("write", self.validateRun)
+
+    def lockBoxes(self, *args):
+
+        console = self.console.get().lower()
+        self.controller_selector.lockBoxes(console)
+
+    def validateRun(self, *args):
+
+        valid = True
+
+        console = self.console.get()
+
+        if console not in ["NES", "SNES", "N64", "Gamecube", "Genesis"]:
+            valid = False
+
+        print(self.movie_name)
+        if self.movie_name.get() == "No movie selected":
+            valid = False
+
+        if valid == False:
+            self.write_button.configure(state = tk.DISABLED)
+        else:
+            self.write_button.configure(state = tk.ACTIVE)
 
     def saveRun(self):
         file = filedialog.asksaveasfilename(initialdir = os.getcwd(),
