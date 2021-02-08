@@ -126,7 +126,10 @@ class TransitionsTable(tk.Frame):
         optionsVar: tk.StringVar = tk.StringVar(self, transition[1] if transition != None else "")
         options: tk.OptionMenu = tk.OptionMenu(self,
                                                optionsVar,
-                                               *["A", "N", "S", "H"])
+                                               *["ACE mode",
+                                                 "Normal mode",
+                                                 "Soft reset",
+                                                 "Hard reset"])
         entry.grid(row = self.count + 1, column = 0, sticky = tk.E + tk.W)
         options.grid(row = self.count + 1, column = 1, sticky = tk.E + tk.W)
         if self.trace != None:
@@ -156,6 +159,16 @@ class TransitionsTable(tk.Frame):
                 output += " "
             frame: str = row['entryVar'].get()
             transition: str = row['optionsVar'].get()
+            
+            if transition == "ACE mode":
+                transition = "A"
+            elif transition == "Normal mode":
+                transition = "N"
+            elif transition == "Soft reset":
+                transition = "S"
+            elif transition == "Hard reset":
+                transition = "H"
+                
             if frame.isnumeric():
                 output += f"{frame} {'X' if transition not in ['A', 'N', 'S', 'H'] else transition}"
 
@@ -170,7 +183,16 @@ class TransitionsTable(tk.Frame):
             for transition in transitions.split(" "):
                 self.addRow()
                 self.rows[-1]["entryVar"].set(transition[0])
-                self.rows[-1]["optionsVar"].set(transition[1])
+                ttype: str = transition[1]
+                if ttype == "A":
+                    ttype = "ACE mode"
+                elif ttype == "N":
+                    ttype = "Normal mode"
+                elif ttype == "S":
+                    ttype = "Soft reset"
+                elif ttype == "H":
+                    ttype = "Hard reset"
+                self.rows[-1]["optionsVar"].set(ttype)
         self.addRow()
         self.running = True
 
