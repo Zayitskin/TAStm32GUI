@@ -71,7 +71,7 @@ class ControllerSelector(tk.Frame):
         elif console == "snes":
             valid = [1, 2, 3, 4, 5, 6, 7, 8]
         elif console == "n64":
-            valid = [1]
+            valid = [1, 2]
         elif console == "gamecube":
             valid = [1]
         elif console == "genesis":
