@@ -1,5 +1,5 @@
 # TAStm32GUI
-A GUI for the TAStm32 device
+A GUI for the TAStm32 device (now with GitHub Actions)
 
 There are two main applications in this repository: main.py and tasfile.py.
 
