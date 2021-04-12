@@ -2,3 +2,6 @@
 runs/*
 !runs/put_runs_here
 /movies/
+/build/
+/dist/
+*.spec
