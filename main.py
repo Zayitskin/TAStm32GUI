@@ -2,6 +2,7 @@
 import zipfile
 import json
 import time
+import os
 import serial
 import serial.tools.list_ports
 from pathlib import Path
@@ -735,7 +736,7 @@ class Creation(tk.Frame):
         if console not in ["NES", "SNES", "N64", "Gamecube", "Genesis"]:
             valid = False
 
-        print(self.movie_name)
+        #print(self.movie_name)
         if self.movie_name.get() == "No movie selected":
             valid = False
 
