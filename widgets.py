@@ -71,7 +71,7 @@ class ControllerSelector(tk.Frame):
         elif console == "snes":
             valid = [1, 2, 3, 4, 5, 6, 7, 8]
         elif console == "n64":
-            valid = [1, 2]
+            valid = [1, 5]
         elif console == "gamecube":
             valid = [1]
         elif console == "genesis":
@@ -180,10 +180,11 @@ class TransitionsTable(tk.Frame):
         while self.count > 0:
             self.removeRow()
         if transitions != "":
-            for transition in transitions.split(" "):
+            transitionList: list[str] = transitions.split(" ")
+            for i in range(0, len(transitionList), 2):
                 self.addRow()
-                self.rows[-1]["entryVar"].set(transition[0])
-                ttype: str = transition[1]
+                self.rows[-1]["entryVar"].set(transitionList[i])
+                ttype: str = transitionList[i + 1]
                 if ttype == "A":
                     ttype = "ACE mode"
                 elif ttype == "N":
